@@ -1,1 +1,3 @@
-# tidy_tuesday
+# Tidy Tuesday
+
+Place for my TidyTuesday code!
