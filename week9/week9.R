@@ -1,4 +1,4 @@
-setwd("/Users/raghu/OneDrive - Baylor College of Medicine/Work/ParsonsLab/Software/tidytuesday/data/")
+setwd("../data/")
 
 ############
 #Author: Raghu Chandramohan
