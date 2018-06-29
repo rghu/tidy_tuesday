@@ -1,0 +1,19 @@
+---
+title: "Week 13"
+author: "Raghu Chandramohan"
+date: "`r format(Sys.Date(), format = '%d/%m/%Y')`"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    code_folding: hide
+    df_print: paged
+    highlight: kate
+    number_sections: yes
+    theme: flatly
+    toc: yes
+    toc_float: yes
+subtitle: Replicating an existing Markdown file
+editor_options:
+  chunk_output_type: console
+  ---
