@@ -18,7 +18,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-
+### Load libraries
 
 ```{r}
 library(fivethirtyeight)
@@ -26,19 +26,20 @@ library(tidyverse)
 library(RColorBrewer)
 ```
 
-View the data
+### View the data
 ```{r}
 drinks
 glimpse(drinks)
 ```
 
-Download the lattitude and longitude for the world map.
+###Download the lattitude and longitude for the world map.
 There are some discrepancies between the countries listed in out 
 ```{r}
 world_map_data = map_data(map = "world")
 drinks$country[which(!(drinks$country %in% world_map_data$region))]
 ```
 
+Swap out the mismatches
 ```{r}
 countries_to_change = drinks$country
 names(countries_to_change) = countries_to_change
@@ -47,11 +48,13 @@ drinks$country = unname(countries_to_change)
 
 ```
 
+### Add new columns for total servings and preferred drink
+
 ```{r}
 drinks_mod = drinks %>% arrange(desc(total_litres_of_pure_alcohol)) %>% mutate(total_servings = beer_servings + spirit_servings + wine_servings) %>% filter(total_servings > 10) %>% mutate(pref_drink = c("beer", "spirits", "wine")[max.col(.[2:4])])
 ```
 
-
+### Plot world map and preferred drink
 ```{r}
 right_join(drinks_mod, world_map_data, by = c('country' = 'region')) %>% 
   ggplot() + 
@@ -75,6 +78,7 @@ right_join(drinks_mod, world_map_data, by = c('country' = 'region')) %>%
 ```
 
 
+### Plot total pure alcohol consumption of top 15 countries and their preferred drink
 ```{r}
 drinks_mod %>% 
   arrange(desc(total_litres_of_pure_alcohol)) %>% 
@@ -99,3 +103,4 @@ drinks_mod %>%
 
 ```
 
+Original work by Veerle van Son. This work was mimiced purely for learning purposes.
