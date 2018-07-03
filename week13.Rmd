@@ -103,4 +103,4 @@ drinks_mod %>%
 
 ```
 
-Original work by Veerle van Son. This work was mimiced purely for learning purposes.
+Original work by Veerle van Son. This work was mimicked purely for learning purposes.
