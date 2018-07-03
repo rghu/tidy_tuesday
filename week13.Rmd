@@ -13,7 +13,89 @@ output:
     toc_float: yes
   pdf_document:
     toc: yes
-subtitle: Replicating an existing Markdown file
+subtitle: Alcohol Consumption Around the World!
 editor_options:
   chunk_output_type: console
 ---
+
+
+
+```{r}
+library(fivethirtyeight)
+library(tidyverse)
+library(RColorBrewer)
+```
+
+View the data
+```{r}
+drinks
+glimpse(drinks)
+```
+
+Download the lattitude and longitude for the world map.
+There are some discrepancies between the countries listed in out 
+```{r}
+world_map_data = map_data(map = "world")
+drinks$country[which(!(drinks$country %in% world_map_data$region))]
+```
+
+```{r}
+countries_to_change = drinks$country
+names(countries_to_change) = countries_to_change
+countries_to_change[c("Antigua & Barbuda", "Bosnia-Herzegovina", "Cote d'Ivoire", "Cabo Verde", "Congo", "DR Congo", "Russian Federation", "United Kingdom")] = c("Antigua", "Bosnia and Herzegovina", "Ivory Coast", "Cape Verde", "Republic of Congo", "Democratic Republic of the Congo", "Russia", "UK")
+drinks$country = unname(countries_to_change)
+
+```
+
+```{r}
+drinks_mod = drinks %>% arrange(desc(total_litres_of_pure_alcohol)) %>% mutate(total_servings = beer_servings + spirit_servings + wine_servings) %>% filter(total_servings > 10) %>% mutate(pref_drink = c("beer", "spirits", "wine")[max.col(.[2:4])])
+```
+
+
+```{r}
+right_join(drinks_mod, world_map_data, by = c('country' = 'region')) %>% 
+  ggplot() + 
+  geom_polygon(aes(x = long, y = lat, group = group, fill = pref_drink), color = "white", size = 0.25) + 
+  scale_fill_manual(values = c("#fecc5c", "#3690c0", "#d7191c"), na.value="#eff3ff") +
+  guides(fill = guide_legend(keywidth = 6, keyheight = 1.5, title=NULL, label.position = "top", label.hjust = 0.5)) +
+  labs(title= "Preferred drink around the world", subtitle = "countries which consume at least 10 servings per capita per year") + 
+  theme(text=element_text(family="Verdana"),
+        plot.title = element_text(hjust = 0.5, size=20), 
+        plot.subtitle = element_text(hjust = 0.5, size = 12),
+        legend.position = "top",
+        legend.text=element_text(size=16),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank()
+        )
+
+```
+
+
+```{r}
+drinks_mod %>% 
+  arrange(desc(total_litres_of_pure_alcohol)) %>% 
+  top_n(15, total_litres_of_pure_alcohol) %>% 
+  ggplot() +
+  geom_bar( aes(x=reorder(country, total_litres_of_pure_alcohol), y=total_litres_of_pure_alcohol, fill=pref_drink), stat="identity", width=0.8) + 
+  coord_flip() +
+  scale_fill_manual(values = c("#fecc5c", "#3690c0", "#d7191c"), na.value="#eff3ff") +
+  guides(fill = guide_legend(keywidth = 6, keyheight = 1.5, title=NULL, label.position = "top", label.hjust = 0.5)) +
+    labs(title= "Top 15 countries with maximum alcohol consumption and their preferred drink type") + 
+  ylab(label = "Total litres of pure alcohol consumed") + 
+  xlab(label = "Countries") +
+  theme(text=element_text(family="Verdana"),
+        plot.title = element_text(hjust = 0.5, size=20), 
+        plot.subtitle = element_text(hjust = 0.5, size = 16),
+        legend.position = "top",
+        legend.text=element_text(size=16),
+        panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid = element_blank()
+        )
+
+```
+
